@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      IMAGE_MODEL_API_KEY: ${IMAGE_MODEL_API_KEY}
+      IMAGE_MODEL_BASE_URL: ${IMAGE_MODEL_BASE_URL:-}
+      IMAGE_MODEL_NAME: ${IMAGE_MODEL_NAME:-gemini-3.1-flash-image-preview}
+      IMAGE_API_MODE: ${IMAGE_API_MODE:-openai}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      OUTPUT_DIR: /app/output
+    volumes:
+      - output_data:/app/output
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${PORT:-80}:80"
+
+volumes:
+  db_data:
+  output_data:
