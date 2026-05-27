@@ -1,0 +1,53 @@
+import type { Config } from 'tailwindcss'
+
+export default {
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'sans-serif'] },
+      colors: {
+        primary: '#4f46e5',
+        'primary-dark': '#3525cd',
+        'on-primary': '#ffffff',
+        'primary-container': '#4f46e5',
+        surface: '#f7f9fb',
+        'surface-variant': '#e0e3e5',
+        'surface-container': '#eceef0',
+        'surface-container-low': '#f2f4f6',
+        'on-surface': '#191c1e',
+        'on-surface-variant': '#464555',
+        outline: '#777587',
+        'outline-variant': '#c7c4d8',
+        secondary: '#565e74',
+        'secondary-container': '#dae2fd',
+        sidebar: '#1a1c2e',
+        'sidebar-active': '#4f46e5',
+        error: '#ba1a1a',
+        'notion-blue': '#0075de',
+        'notion-blue-dark': '#005bab',
+        'notion-blue-focus': '#097fe8',
+        'notion-warm-white': '#f6f5f4',
+        'notion-warm-dark': '#31302e',
+        'notion-warm-gray': '#615d59',
+        'notion-warm-muted': '#a39e98',
+        'notion-badge-bg': '#f2f9ff',
+        'notion-badge-text': '#097fe8',
+        'notion-navy': '#213183',
+      },
+      letterSpacing: {
+        'display': '-2.125px',
+        'display-sm': '-1.875px',
+        'section': '-1.5px',
+        'subheading': '-0.625px',
+        'card': '-0.25px',
+        'body-large': '-0.125px',
+        'badge': '0.125px',
+      },
+      boxShadow: {
+        'notion-card': 'rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.84688px, rgba(0,0,0,0.02) 0px 0.8px 2.925px, rgba(0,0,0,0.01) 0px 0.175px 1.04062px',
+        'notion-deep': 'rgba(0,0,0,0.01) 0px 1px 3px, rgba(0,0,0,0.02) 0px 3px 7px, rgba(0,0,0,0.02) 0px 7px 15px, rgba(0,0,0,0.04) 0px 14px 28px, rgba(0,0,0,0.05) 0px 23px 52px',
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config

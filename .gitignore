@@ -13,11 +13,30 @@ Desktop.ini
 node_modules/
 npm-debug.log*
 
+# Build
+dist/
+build/
+
 # Environment
 .env
 .env.local
 
-# Build
-dist/
-build/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+venv/
+.venv/
+
+# Backend runtime
+backend/output/
+*.db
+*.sqlite
+
+# Logs
 *.log
+
+# SSH logs
+*.rtf

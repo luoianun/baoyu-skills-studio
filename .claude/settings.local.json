@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/git/content-studio-web/**)",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\(data[0]['text']\\)\")",
+      "Bash(python3 -c ' *)",
+      "PowerShell($data = Get-Content \"C:\\\\Users\\\\law\\\\.claude\\\\projects\\\\d--git-baoyu-skills-studio\\\\357c1060-0b8a-42ef-ae85-91cbfa7ee6c4\\\\tool-results\\\\toolu_bdrk_014DpzVUJG7JzPsiDoBRQkcM.json\" -Raw | ConvertFrom-Json; $data[0].text)"
+    ],
+    "additionalDirectories": [
+      "D:\\git\\content-studio-web\\frontend\\src\\components\\portfolio",
+      "D:\\git\\content-studio-web\\frontend\\src\\pages\\admin"
+    ]
+  }
+}
