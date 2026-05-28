@@ -11,9 +11,36 @@ from app.models.user import User
 from app.models.portfolio import Portfolio
 from app.models.credit_transaction import CreditTransaction
 from app.models.user_activity import UserActivity
+from app.models.app_config import AppConfig
 from app.services import credits_service
 
 router = APIRouter()
+
+CONFIG_KEYS = {"image_api_mode", "image_model_base_url", "image_model_api_key", "image_model_name"}
+
+class ApiConfigIn(BaseModel):
+    image_api_mode: str
+    image_model_base_url: str
+    image_model_api_key: str
+    image_model_name: str
+
+@router.get("/config/api")
+def get_api_config(db: Session = Depends(get_db), _=Depends(require_admin)):
+    rows = db.query(AppConfig).filter(AppConfig.key.in_(CONFIG_KEYS)).all()
+    result = {r.key: r.value for r in rows}
+    return {k: result.get(k, "") for k in CONFIG_KEYS}
+
+@router.put("/config/api")
+def put_api_config(body: ApiConfigIn, db: Session = Depends(get_db), _=Depends(require_admin)):
+    data = body.model_dump()
+    for key, value in data.items():
+        row = db.get(AppConfig, key)
+        if row:
+            row.value = value
+        else:
+            db.add(AppConfig(key=key, value=value))
+    db.commit()
+    return data
 
 class IssueCreditsIn(BaseModel):
     amount: int

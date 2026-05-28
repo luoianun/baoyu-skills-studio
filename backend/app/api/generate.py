@@ -1,4 +1,5 @@
 import uuid
+import logging
 from datetime import datetime, timezone
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -17,6 +18,7 @@ from app.services.modules import (
 )
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 async def _generate_in_background(portfolio_id: str, user_id: int, prompt: str, image_count: int, module_name: str):
     from app.core.database import SessionLocal
@@ -28,6 +30,7 @@ async def _generate_in_background(portfolio_id: str, user_id: int, prompt: str, 
         try:
             b64_images = await image_gen_service.generate_images(prompt, count=image_count)
         except Exception as e:
+            logger.error("Image generation failed for portfolio %s: %s", portfolio_id, e, exc_info=True)
             portfolio.status = "failed"
             portfolio.error_msg = str(e)
             db.commit()

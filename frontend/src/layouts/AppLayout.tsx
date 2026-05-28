@@ -19,6 +19,7 @@ const adminLinks = [
   { to: '/admin', icon: 'dashboard', label: '仪表盘' },
   { to: '/admin/users', icon: 'group', label: '用户' },
   { to: '/admin/generations', icon: 'image_search', label: '生成记录' },
+  { to: '/admin/config/api', icon: 'api', label: 'API 配置' },
 ]
 
 export function AppLayout() {
@@ -60,6 +61,8 @@ export function AppLayout() {
     admin: '管理后台',
     users: '用户',
     generations: '生成记录',
+    config: '配置',
+    api: 'API 配置',
   }
 
   const crumb = (() => {

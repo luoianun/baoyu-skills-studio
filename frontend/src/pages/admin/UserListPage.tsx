@@ -24,7 +24,7 @@ export default function UserListPage() {
 
   const fetchUsers = () => {
     setLoading(true)
-    adminApi.users({ page, search }).then(data => {
+    adminApi.users({ page, search }).then((data: { items: User[]; total: number }) => {
       setUsers(data.items)
       setTotal(data.total)
       setLoading(false)

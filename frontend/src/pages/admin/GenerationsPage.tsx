@@ -41,7 +41,7 @@ export default function GenerationsPage() {
   useEffect(() => {
     setLoading(true)
     adminApi.generations({ page, module: moduleFilter || undefined, status: statusFilter || undefined })
-      .then(data => {
+      .then((data: { items: any[]; total: number }) => {
         setItems(data.items)
         setTotal(data.total)
         setLoading(false)

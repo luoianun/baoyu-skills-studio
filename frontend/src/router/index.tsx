@@ -15,6 +15,7 @@ import DashboardPage from '../pages/admin/DashboardPage'
 import UserListPage from '../pages/admin/UserListPage'
 import UserDetailPage from '../pages/admin/UserDetailPage'
 import GenerationsPage from '../pages/admin/GenerationsPage'
+import ApiConfigPage from '../pages/admin/ApiConfigPage'
 
 export const router = createBrowserRouter([
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
           { path: 'users', element: <UserListPage /> },
           { path: 'users/:id', element: <UserDetailPage /> },
           { path: 'generations', element: <GenerationsPage /> },
+          { path: 'config/api', element: <ApiConfigPage /> },
         ]},
       ],
     }],

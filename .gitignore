@@ -40,3 +40,4 @@ backend/output/
 
 # SSH logs
 *.rtf
+.playwright-mcp/

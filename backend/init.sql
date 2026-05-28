@@ -98,11 +98,21 @@ CREATE TABLE `user_activities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
--- 6. alembic_version（alembic 迁移版本记录）
+-- 6. app_config（系统配置 key/value）
+-- ----------------------------
+CREATE TABLE `app_config` (
+  `key`        VARCHAR(64) NOT NULL,
+  `value`      TEXT        NOT NULL,
+  `updated_at` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- 7. alembic_version（alembic 迁移版本记录）
 -- ----------------------------
 CREATE TABLE `alembic_version` (
   `version_num` VARCHAR(32) NOT NULL,
   PRIMARY KEY (`version_num`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `alembic_version` VALUES ('006');
+INSERT INTO `alembic_version` VALUES ('007');
