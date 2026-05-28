@@ -1,73 +1,186 @@
-# baoyu-skills-studio
+# Baoyu Skills Studio
 
-AI 图像生成创作台，基于 [baoyu-skills](https://github.com/JimLiu/baoyu-skills) 技能体系产品化，支持封面图、信息图、文章配图、知识漫画、幻灯片、小红书配图六大生成模块。
+An AI image generation studio built on the [baoyu-skills](https://github.com/JimLiu/baoyu-skills) framework. Supports six generation modules — cover images, infographics, article illustrations, knowledge comics, slide decks, and Xiaohongshu images — with a built-in credits system and admin dashboard.
 
-## 技术栈
+[中文文档](README.zh.md)
 
-| 层 | 技术 |
+---
+
+## Screenshots
+
+### Login
+
+![Login](docs/screenshots/studio-login.png)
+
+### Studio
+
+| Cover Image | Infographic |
+|:---:|:---:|
+| ![Cover Image](docs/screenshots/studio-cover-image.png) | ![Infographic](docs/screenshots/studio-infographic.png) |
+
+| Article Illustrator | Knowledge Comic |
+|:---:|:---:|
+| ![Article Illustrator](docs/screenshots/studio-article-illustrator.png) | ![Knowledge Comic](docs/screenshots/studio-comic.png) |
+
+| Slide Deck | Xiaohongshu Images |
+|:---:|:---:|
+| ![Slide Deck](docs/screenshots/studio-slide-deck.png) | ![Xiaohongshu Images](docs/screenshots/studio-xhs-images.png) |
+
+### Portfolio
+
+<!-- ![Portfolio](docs/screenshots/portfolios.png) -->
+
+### Admin Dashboard
+
+| Dashboard | User Management |
+|:---:|:---:|
+| ![Dashboard](docs/screenshots/admin-dashboard.png) | ![User Management](docs/screenshots/admin-users.png) |
+
+| Generation Records | API Config |
+|:---:|:---:|
+| ![Generation Records](docs/screenshots/admin-generations.png) | ![API Config](docs/screenshots/admin-api-config.png) |
+
+---
+
+## Features
+
+### Six Generation Modules
+
+| Module | Description | Credits |
+|---|---|:---:|
+| Cover Image | Article / content covers, 10 color schemes × 7 rendering styles | 1 |
+| Infographic | 8 layouts × 8 visual styles, landscape / portrait / square | 1 |
+| Article Illustrator | Series of images by density (minimal / balanced / per-paragraph / rich) | 2–6 |
+| Knowledge Comic | 5 art styles × 6 tones, multiple layouts | 4 |
+| Slide Deck | 7 styles, 1–8 slides, each generated independently | 1 / slide |
+| Xiaohongshu Images | 11 styles × 8 layouts, 1–6 image series | 1 / image |
+
+### Credits System
+
+- Each generation deducts the corresponding credits; generation is rejected when credits are insufficient
+- Admins can add or deduct credits for any user, with an operation log
+- Credit history is viewable in Admin → User Detail
+
+### Portfolio Management
+
+- Each generation task runs asynchronously; results are available in "My Portfolio"
+- Filter by module, soft delete supported
+- Full-screen preview and download on the detail page
+
+### Admin Dashboard
+
+- Dashboard: registered users, total generations, 14-day trend chart
+- User management: search, enable / disable, credit adjustment, view details
+- Generation records: full task list with status and error info
+- API config: visually configure the image generation API (GPT Image 2, Banana2, Gemini, or any OpenAI-compatible endpoint); changes take effect immediately without restart
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
 |---|---|
-| 前端 | React 19 · Vite · TypeScript · TailwindCSS · Zustand |
-| 后端 | FastAPI · SQLAlchemy 2 · Alembic · PyMySQL |
-| 图像生成 | Gemini (`gemini-3.1-flash-image-preview`) / OpenAI 兼容 API |
+| Frontend | React 19 · Vite · TypeScript · TailwindCSS · Zustand |
+| Backend | FastAPI · SQLAlchemy 2 · Alembic · PyMySQL |
+| Database | MySQL 8.0 |
+| Deployment | Docker Compose · Nginx |
+| Image Generation | OpenAI-compatible API / Google Gemini native API |
 
-## 目录结构
+---
+
+## Project Structure
 
 ```
 baoyu-skills-studio/
-├── frontend/          # React 前端
-│   └── src/
-│       ├── pages/studio/      # 6 个生成模块页面
-│       ├── pages/portfolios/  # 作品集管理
-│       ├── pages/admin/       # 管理后台
-│       ├── components/        # 共用组件
-│       ├── api/               # Axios 请求层
-│       ├── store/             # Zustand 状态
-│       └── hooks/             # useGenerationPolling 等
-└── backend/           # FastAPI 后端
-    └── app/
-        ├── api/               # 路由（auth/generate/portfolios/admin）
-        ├── services/modules/  # 6 个模块的 prompt 逻辑
-        ├── models/            # SQLAlchemy ORM
-        └── core/              # 配置、数据库、鉴权
+├── frontend/                  # React frontend
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── studio/        # 6 generation module pages
+│   │   │   ├── portfolios/    # Portfolio list & detail
+│   │   │   ├── admin/         # Admin (dashboard, users, records, API config)
+│   │   │   └── auth/          # Login & register
+│   │   ├── components/        # Shared UI components
+│   │   ├── api/               # Axios request wrappers
+│   │   ├── store/             # Zustand global state
+│   │   ├── hooks/             # useGenerationPolling etc.
+│   │   └── layouts/           # AppLayout (sidebar navigation)
+│   └── nginx.conf             # Production Nginx config
+├── backend/                   # FastAPI backend
+│   ├── app/
+│   │   ├── api/               # Routes (auth / generate / portfolios / admin)
+│   │   ├── services/
+│   │   │   ├── modules/       # Prompt building logic for each module
+│   │   │   ├── image_gen_service.py   # Unified image service (OpenAI / Gemini)
+│   │   │   ├── file_service.py        # Image persistence
+│   │   │   └── credits_service.py     # Credits deduction
+│   │   ├── models/            # SQLAlchemy ORM models
+│   │   ├── schemas/           # Pydantic request / response models
+│   │   └── core/              # Config, DB connection, JWT auth
+│   ├── alembic/               # Migration scripts (001–007)
+│   ├── scripts/
+│   │   └── create_admin.py    # Initialize admin account
+│   ├── init.sql               # Full DDL equivalent to alembic upgrade head
+│   └── requirements.txt
+├── docs/
+│   └── screenshots/           # Product screenshots (referenced by README)
+├── docker-compose.yml
+├── .env.example               # Environment variable template
+└── README.md
 ```
 
-## 支持的生成模块
+---
 
-| 模块 | 说明 | 积分消耗 |
-|---|---|---|
-| 封面图 | 文章/内容封面，10 种配色 × 7 种渲染风格 | 1 |
-| 信息图 | 8 种布局 × 8 种视觉风格，支持横/竖/方图 | 1 |
-| 文章配图 | 按密度生成系列配图（极简/均衡/按段落/丰富） | 2–6 |
-| 知识漫画 | 5 种画风 × 6 种基调，支持多种版式 | 4 |
-| 幻灯片 | 7 种风格，1–8 张，每张 1 积分 | 1/张 |
-| 小红书配图 | 11 种风格 × 8 种版式，1–6 张系列图 | 1/张 |
+## Quick Start
 
-## 快速开始
+### Option 1: Docker (Recommended)
 
-### Docker 部署（推荐）
+**1. Prepare environment variables**
 
 ```bash
-cp .env.example .env    # 填写数据库密码、JWT_SECRET_KEY、API Key
-docker compose up -d    # 首次启动自动执行 alembic upgrade head 建表
+cp .env.example .env
 ```
 
-访问 `http://localhost`（或 `.env` 中 `PORT` 指定的端口）。
+Edit `.env` and fill in at least these fields:
 
-创建管理员账号（首次部署）：
+```env
+MYSQL_ROOT_PASSWORD=your_root_password
+MYSQL_PASSWORD=your_studio_password
+JWT_SECRET_KEY=your_long_random_secret    # 64-character random string recommended
+IMAGE_MODEL_API_KEY=your_api_key
+```
+
+**2. Start services**
+
+```bash
+docker compose up -d
+```
+
+On first start, `alembic upgrade head` runs automatically — no manual migration needed.
+
+**3. Initialize admin account**
 
 ```bash
 docker compose exec backend python scripts/create_admin.py
 ```
 
-| 服务 | 说明 |
+Default admin credentials:
+
+| Field | Value |
 |---|---|
-| `db` | MySQL 8.0，数据持久化到 `db_data` volume |
-| `backend` | FastAPI，仅容器内暴露 8700，生成图片存入 `output_data` volume |
-| `frontend` | Nginx 静态托管 + 反代 `/api`、`/output` 到后端，对外暴露 `PORT` |
+| Email | `admin@studio.com` |
+| Password | `changeme` |
 
-### 本地开发
+> **Change the password immediately after first login.**
 
-#### 前端
+**4. Access**
+
+Open `http://localhost` (or the port set by `PORT` in `.env`).
+
+---
+
+### Option 2: Local Development
+
+#### Frontend
 
 ```bash
 cd frontend
@@ -75,41 +188,101 @@ npm install
 npm run dev        # http://localhost:5173
 ```
 
-#### 后端
+#### Backend
 
 ```bash
 cd backend
 pip install -r requirements.txt
-cp .env.example .env   # 填写数据库和 API Key
-alembic upgrade head
+cp .env.example .env    # fill in DB connection and API key
+alembic upgrade head    # create tables
 uvicorn main:app --port 8700 --reload
 ```
 
-前端通过 Vite 代理将 `/api` 和 `/output` 转发到 `http://localhost:8700`。
+The Vite dev server proxies `/api` and `/output` to `http://localhost:8700`.
 
-## 环境变量（.env）
+---
 
-Docker 部署使用根目录 `.env`，本地开发使用 `backend/.env`。
+## Environment Variables
+
+Docker deployment uses the root `.env`; local development uses `backend/.env` (same fields).
 
 ```env
-# MySQL（Docker 部署必填）
+# ── MySQL (required for Docker) ──────────────────────────
 MYSQL_ROOT_PASSWORD=change_me_root
 MYSQL_DATABASE=baoyu_studio
 MYSQL_USER=studio
 MYSQL_PASSWORD=change_me_studio
 
-# 后端
-JWT_SECRET_KEY=your-very-long-random-secret
+# ── Backend ──────────────────────────────────────────────
+DATABASE_URL=mysql+pymysql://studio:change_me_studio@db/baoyu_studio
+JWT_SECRET_KEY=your-very-long-random-secret   # at least 32 characters
 
-# 图像生成 API
-IMAGE_MODEL_API_KEY=your-gemini-or-openai-key
-IMAGE_MODEL_BASE_URL=              # OpenAI 兼容端点，Gemini 模式留空
-IMAGE_MODEL_NAME=gemini-3.1-flash-image-preview
+# ── Image Generation API (can also be configured in admin UI) ──
 IMAGE_API_MODE=openai              # openai | gemini
+IMAGE_MODEL_BASE_URL=              # OpenAI-compatible endpoint; leave empty for Gemini
+IMAGE_MODEL_NAME=gpt-image-2
+IMAGE_MODEL_API_KEY=your_api_key
 
-# CORS（改为实际访问地址）
-FRONTEND_URL=http://localhost
-
-# 对外端口（默认 80）
-PORT=80
+# ── Other ────────────────────────────────────────────────
+FRONTEND_URL=http://localhost      # CORS allowlist; set to actual access URL
+PORT=80                            # Exposed port
 ```
+
+> **API config priority**: values saved in the admin dashboard override `.env`. Changes take effect immediately without restarting containers.
+
+---
+
+## Docker Services
+
+| Service | Description |
+|---|---|
+| `db` | MySQL 8.0, data persisted to `db_data` volume |
+| `backend` | FastAPI, port exposed only inside the container (8700); generated images stored in `output_data` volume |
+| `frontend` | Nginx serving the React build, reverse-proxying `/api` and `/output` to the backend, exposing `PORT` externally |
+
+---
+
+## Supported Image Generation APIs
+
+The admin API Config page provides one-click presets and also accepts any OpenAI-compatible endpoint.
+
+| Preset | Mode | Notes |
+|---|---|---|
+| GPT Image 2 | OpenAI-compatible | Official `api.openai.com`, `gpt-image-2` model |
+| Banana2 | OpenAI-compatible | Third-party OpenAI-compatible image generation service |
+| Gemini | Gemini native | Google `gemini-2.0-flash-preview-image-generation` |
+| Custom | Any | Manually enter Base URL, API Key, and model name |
+
+---
+
+## Database Migrations
+
+The project uses Alembic; the latest version is `007`.
+
+```bash
+# Upgrade to latest
+alembic upgrade head
+
+# Check current version
+alembic current
+
+# Roll back one step
+alembic downgrade -1
+```
+
+For a fresh deployment you can also import `backend/init.sql` directly, which is equivalent to `alembic upgrade head`.
+
+---
+
+## Deployment Notes
+
+- **China network**: `Dockerfile` uses `docker.m.daocloud.io/` mirror prefixes so images can be pulled without a proxy.
+- **bcrypt compatibility**: `requirements.txt` pins `bcrypt==4.2.1`. bcrypt 5.x is incompatible with passlib 1.7.4 — do not upgrade across major versions.
+- **Generation timeout**: image API requests time out after 300 seconds; slow responses from some models are expected.
+- **Image storage**: generated images are stored in the `output_data` Docker volume and served via Nginx at `/output`.
+
+---
+
+## License
+
+MIT
